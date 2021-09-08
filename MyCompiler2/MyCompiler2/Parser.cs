@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -174,7 +174,10 @@ namespace MyCompiler2
 
             //if (lex.TL.tokens[index].value == "(" || lex.TL.tokens[index].type == Language.Identifer || lex.TL.tokens[index].type == Language.IntNumber || lex.TL.tokens[index].type == Language.trueBoolean || lex.TL.tokens[index].type == Language.String || lex.TL.tokens[index].type == Language.Char)
             {
-                if (Exp())
+
+
+                Token tmp = lex.TL.tokens[index];
+                if (Exp(tmp.value))
                 {
 
                     if (lex.TL.tokens[index].value == ";")
@@ -182,7 +185,9 @@ namespace MyCompiler2
                         index++;
                         return true;
                     }
+
                 }
+
             }
             else if (lex.TL.tokens[index].value == "for" || lex.TL.tokens[index].value == "while")
             {
@@ -308,7 +313,7 @@ namespace MyCompiler2
                     if (lex.TL.tokens[index].value == "=")
                     {
                         index++;
-                        if (Exp3(tmptype))
+                        if (SimpleExp(tmptype))
                         {
                             ST.addSymbol(s);
                             ST.print();
@@ -341,7 +346,7 @@ namespace MyCompiler2
                         if (lex.TL.tokens[index].value == "=")
                         {
                             index++;
-                            if (Exp3(tmptype))
+                            if (SimpleExp(tmptype))
                             {
                                 ST.addSymbol(s);
                                 ST.print();
@@ -422,7 +427,8 @@ namespace MyCompiler2
                 if (lex.TL.tokens[index].value == "(")
                 {
                     index++;
-                    if (Exp())
+                    Token tmpTypeToken = lex.TL.tokens[index];
+                    if (Exp(tmpTypeToken.value))
                     {
                         if (lex.TL.tokens[index].value == ")")
                         {
@@ -480,6 +486,7 @@ namespace MyCompiler2
 
         public bool Exprloop()
         {
+
             if (lex.TL.tokens[index].value == "for" || lex.TL.tokens[index].value == "while")
             {
                 if (lex.TL.tokens[index].value == "for")
@@ -490,12 +497,14 @@ namespace MyCompiler2
                         index++;
                         if (DefinintionStmt())
                         {
-                            if (Exp())
+                            Token tmpTypeToken = lex.TL.tokens[index];
+                            if (Exp(tmpTypeToken.value))
                             {
                                 if (lex.TL.tokens[index].value == ";")
                                 {
                                     index++;
-                                    if (Exp())
+                                    Token tmpTypeToken2 = lex.TL.tokens[index];
+                                    if (Exp(tmpTypeToken2.value))
                                     {
 
                                         if (lex.TL.tokens[index].value == ")")
@@ -532,8 +541,10 @@ namespace MyCompiler2
                     if (lex.TL.tokens[index].value == "(")
                     {
                         index++;
-                        if (Exp())
+                        Token tmpTypeToken = lex.TL.tokens[index];
+                        if (Exp(tmpTypeToken.value))
                         {
+
                             if (lex.TL.tokens[index].value == ")")
                             {
                                 index++;
@@ -566,17 +577,38 @@ namespace MyCompiler2
             //}
             return false;
         }
-        public bool Exp()
+        //public bool condition()
+        //{
+        //    Token tmp = lex.TL.tokens[index];
+        //    if (lex.TL.tokens[index].value == "(" || lex.TL.tokens[index].type == Language.Identifer || lex.TL.tokens[index].type == Language.IntNumber || lex.TL.tokens[index].type == Language.trueBoolean || lex.TL.tokens[index].type == Language.String || lex.TL.tokens[index].type == Language.Char)
+        //    {
+
+        //        if (SimpleExp(tmp.value))
+        //        {
+        //            if (CompareOp())
+        //            {
+        //                if (SimpleExp(tmp.value))
+        //                {
+        //                    return true;
+        //                }
+        //            }
+
+        //        }
+        //    }
+        //    return false;
+
+        //}
+        public bool Exp(String tmptype)
         {
 
             if (lex.TL.tokens[index].value == "(" || lex.TL.tokens[index].type == Language.Identifer || lex.TL.tokens[index].type == Language.IntNumber || lex.TL.tokens[index].type == Language.trueBoolean || lex.TL.tokens[index].type == Language.String || lex.TL.tokens[index].type == Language.Char)
             {
 
-                if (SimpleExp())
+                if (SimpleExp(tmptype))
                 {
                     if (CompareOp())
                     {
-                        if (SimpleExp())
+                        if (SimpleExp(tmptype))
                         {
                             return true;
                         }
@@ -636,26 +668,32 @@ namespace MyCompiler2
                 index++;
                 return true;
             }
+            else if (lex.TL.tokens[index].value == "&&")
+
+            {
+                index++;
+                return true;
+            }
             return false;
         }
-        public bool SimpleExp()
+        public bool SimpleExp(string tmptype)
         {
-            if (Term())
+            if (Term(tmptype))
             {
-                if (SimpleExpPrime())
+                if (SimpleExpPrime(tmptype))
                 {
                     return true;
                 }
             }
             return false;
         }
-        public bool SimpleExpPrime()
+        public bool SimpleExpPrime(string tmptype)
         {
             if (AddOp())
             {
-                if (Term())
+                if (Term(tmptype))
                 {
-                    if (SimpleExpPrime())
+                    if (SimpleExpPrime(tmptype))
                     {
 
                         return true;
@@ -698,25 +736,25 @@ namespace MyCompiler2
             }
             return false;
         }
-        public bool Term()
+        public bool Term(string tmptype)
         {
 
-            if (Factor())
+            if (Factor(tmptype))
             {
-                if (TermPrime())
+                if (TermPrime(tmptype))
                 {
                     return true;
                 }
             }
             return false;
         }
-        public bool TermPrime()
+        public bool TermPrime(string tmptype)
         {
             if (MulOp())
             {
-                if (Factor())
+                if (Factor(tmptype))
                 {
-                    if (TermPrime())
+                    if (TermPrime(tmptype))
                     {
                         return true;
                     }
@@ -740,18 +778,23 @@ namespace MyCompiler2
                 index++;
                 return true;
             }
+            else if (lex.TL.tokens[index].value == "%")
+            {
+                index++;
+                return true;
+            }
             return false;
         }
-        public bool Factor()
+        public bool Factor(string tmptype)
         {
-            if (Factor2())
+            if (Factor2(tmptype))
             {
                 return true;
             }
             else if (lex.TL.tokens[index].value == "-")
             {
                 index++;
-                if (Factor2())
+                if (Factor2(tmptype))
                 {
                     return true;
                 }
@@ -780,12 +823,13 @@ namespace MyCompiler2
 
         }
 
-        public bool Factor2()
+        public bool Factor2(string tmptype)
         {
+            Token tmpIdToken = lex.TL.tokens[index];
             if (lex.TL.tokens[index].value == "(")
             {
                 index++;
-                if (SimpleExp())
+                if (SimpleExp(tmptype))
                 {
                     if (lex.TL.tokens[index].value == ")")
                     {
@@ -794,188 +838,9 @@ namespace MyCompiler2
                     }
                 }
             }
-            else if (Values() != "")
-            {
-                if (true)
-                {
-                    return true;
-                }
-            }
-            else if (lex.TL.tokens[index].type == Language.Identifer)
-            {
-                index++;
-                return true;
-            }
-            else { return false; }
-            return false;
-        }
 
-
-        public bool Exp3(String tmptype)
-        {
-
-            if (lex.TL.tokens[index].value == "(" || lex.TL.tokens[index].type == Language.Identifer || lex.TL.tokens[index].type == Language.IntNumber || lex.TL.tokens[index].type == Language.trueBoolean || lex.TL.tokens[index].type == Language.String || lex.TL.tokens[index].type == Language.Char)
-            {
-                if (SimpleExp2(tmptype))
-                {
-
-
-
-                    return true;
-
-
-
-
-                }
-            }
-            return false;
-
-        }
-
-        public bool SimpleExp2(String tmptype)
-        {
-            if (Term2(tmptype))
-            {
-                if (SimpleExpPrime2(tmptype))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public bool SimpleExpPrime2(string tmptype)
-        {
-            if (AddOp2())
-            {
-                if (Term2(tmptype))
-                {
-                    if (SimpleExpPrime2(tmptype))
-                    {
-
-                        return true;
-                    }
-
-                }
-            }
             else
             {
-                return true;
-            }
-            return false;
-        }
-
-        public bool AddOp2()
-        {
-            if (lex.TL.tokens[index].value == "+")
-            {
-                index++;
-                return true;
-            }
-            else if (lex.TL.tokens[index].value == "-")
-            {
-                index++;
-                return true;
-            }
-            return false;
-        }
-
-        public bool Term2(string tmptype)
-        {
-            if (Factor2a(tmptype))
-            {
-                if (TermPrime2(tmptype))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public bool TermPrime2(string tmptype)
-        {
-            if (MulOp2())
-            {
-                if (Factor2a(tmptype))
-                {
-                    if (TermPrime2(tmptype))
-                    {
-                        return true;
-                    }
-                }
-            }
-            else
-            {
-                return true;
-            }
-            return false;
-        }
-        public bool MulOp2()
-        {
-            if (lex.TL.tokens[index].value == "*")
-            {
-                index++;
-                return true;
-            }
-            else if (lex.TL.tokens[index].value == "/")
-            {
-                index++;
-                return true;
-            }
-            return false;
-        }
-        public bool Factor2a(string tmptype)
-        {
-            if (Factor4(tmptype))
-            {
-                return true;
-            }
-            else if (lex.TL.tokens[index].value == "-")
-            {
-                index++;
-                if (Factor4(tmptype))
-                {
-                    return true;
-                }
-            }
-            else
-               if (Boolean2())
-            {
-                return true;
-            }
-            return false;
-        }
-        public bool Boolean2()
-        {
-            if (lex.TL.tokens[index].type == Language.trueBoolean)
-            {
-                index++;
-                return true;
-            }
-            else
-              if (lex.TL.tokens[index].type == Language.falseBoolean)
-            {
-                index++;
-                return true;
-            }
-            return false;
-
-        }
-        public bool Factor4(string tmptype)
-        {
-            if (lex.TL.tokens[index].value == "(")
-            {
-                index++;
-                if (SimpleExp2(tmptype))
-                {
-                    if (lex.TL.tokens[index].value == ")")
-                    {
-                        index++;
-                        return true;
-                    }
-                }
-            }
-            else
-            {
-
                 string valRes = Values();
 
                 if (valRes != "")
@@ -984,22 +849,46 @@ namespace MyCompiler2
                     {
                         return true;
                     }
+                    else if (ST.searchSymbolByName(tmptype))
+                    {
+                        Console.WriteLine("find the type");
+                        return true;
+                    }
+                    else if (lex.TL.tokens[index - 2].value == "<<")
+                    {
+
+                        return true;
+
+                    }
                     else
                     {
-                        Console.WriteLine("Error in type");
+                        Console.WriteLine("Error type");
+                        Console.WriteLine(tmptype);
+                        return false;
                     }
                 }
                 else
                 if (lex.TL.tokens[index].type == Language.Identifer)
                 {
-                    index++;
-                    return true;
+                    if (ST.searchSymbolByName(lex.TL.tokens[index].value))
+                    {
+                        index++;
+                        return true;
+                    }
+
+                    else
+                    {
+                        Console.WriteLine("Error you must Declare " + lex.TL.tokens[index].value);
+                        return false;
+                    }
                 }
             }
 
-
             return false;
         }
+
+
+
         public bool ArrayIndex(string tmptype, string indexnumber)
         {
             if (lex.TL.tokens[index].value == "{")
@@ -1075,12 +964,12 @@ namespace MyCompiler2
             }
             return false;
         }
-        public bool Exp2()
+        public bool outputvalue(string tmptype)
         {
 
             if (lex.TL.tokens[index].value == "(" || lex.TL.tokens[index].type == Language.Identifer || lex.TL.tokens[index].type == Language.IntNumber || lex.TL.tokens[index].type == Language.trueBoolean || lex.TL.tokens[index].type == Language.falseBoolean || lex.TL.tokens[index].type == Language.String || lex.TL.tokens[index].type == Language.Char)
             {
-                if (SimpleExp())
+                if (SimpleExp(tmptype))
                 {
 
 
@@ -1094,6 +983,7 @@ namespace MyCompiler2
         }
         public bool OutputStmt()
         {
+
             if (lex.TL.tokens[index].value == "cout")
             {
                 index++;
@@ -1101,7 +991,8 @@ namespace MyCompiler2
                 {
 
                     index++;
-                    if (Exp2())
+                    Token tmpTypeToken = lex.TL.tokens[index];
+                    if (outputvalue(tmpTypeToken.value))
                     {
                         if (Loop())
                         {
@@ -1117,6 +1008,7 @@ namespace MyCompiler2
         }
         public bool Loop()
         {
+
             if (lex.TL.tokens[index].value == ";")
             {
                 index++;
@@ -1129,7 +1021,8 @@ namespace MyCompiler2
 
 
                 index++;
-                if (Exp2())
+                Token tmpTypeToken = lex.TL.tokens[index];
+                if (outputvalue(tmpTypeToken.value))
                 {
                     if (Loop())
                     {
@@ -1166,7 +1059,7 @@ namespace MyCompiler2
             else if (lex.TL.tokens[index].type == Language.String)
             {
                 index++;
-                return "string";
+                return "String";
             }
             else if (lex.TL.tokens[index].type == Language.Char)
             {
