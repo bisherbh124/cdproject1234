@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -420,14 +420,11 @@ namespace MyCompiler2
         public bool Ds2(string tmptype)
         {
             Token tmpIdToken = lex.TL.tokens[index];
-
             if (lex.TL.tokens[index].type == Language.Identifer)
             {
                 Symbol s = new Symbol(tmpIdToken.value, tmptype, scopeCounter);
                 if (!ST.searchSymbolByName(tmpIdToken.value))
                 {
-
-
                     index++;
                     if (lex.TL.tokens[index].value == "=")
                     {
@@ -603,7 +600,6 @@ namespace MyCompiler2
         }
         public bool Exprloop()
         {
-
             if (lex.TL.tokens[index].value == "for" || lex.TL.tokens[index].value == "while")
             {
                 if (lex.TL.tokens[index].value == "for")
@@ -623,14 +619,12 @@ namespace MyCompiler2
                                     Token tmpTypeToken2 = lex.TL.tokens[index];
                                     if (Exp(tmpTypeToken2.value))
                                     {
-
                                         if (lex.TL.tokens[index].value == ")")
                                         {
                                             index++;
                                             if (lex.TL.tokens[index].value == "{")
                                             {
                                                 index++;
-
                                                 scopeCounter++;
                                                 if (StmtList())
                                                 {
@@ -681,7 +675,6 @@ namespace MyCompiler2
                                             return true;
                                         }
                                     }
-
                                 }
                             }
                         }
@@ -750,34 +743,31 @@ namespace MyCompiler2
             } if (lex.TL.tokens[index].value == ")") { return true; }
             return false;
         }
-        public bool Exp()
-        //public bool condition()
-        //{
-        //    Token tmp = lex.TL.tokens[index];
-        //    if (lex.TL.tokens[index].value == "(" || lex.TL.tokens[index].type == Language.Identifer || lex.TL.tokens[index].type == Language.IntNumber || lex.TL.tokens[index].type == Language.trueBoolean || lex.TL.tokens[index].type == Language.String || lex.TL.tokens[index].type == Language.Char)
-        //    {
-
-        //        if (SimpleExp(tmp.value))
-        //        {
-        //            if (CompareOp())
-        //            {
-        //                if (SimpleExp(tmp.value))
-        //                {
-        //                    return true;
-        //                }
-        //            }
-
-        //        }
-        //    }
-        //    return false;
-
-        //}
-        public bool Exp(String tmptype)
+        public bool condition()
         {
-
+            Token tmp = lex.TL.tokens[index];
             if (lex.TL.tokens[index].value == "(" || lex.TL.tokens[index].type == Language.Identifer || lex.TL.tokens[index].type == Language.IntNumber || lex.TL.tokens[index].type == Language.trueBoolean || lex.TL.tokens[index].type == Language.String || lex.TL.tokens[index].type == Language.Char)
             {
 
+                if (SimpleExp(tmp.value))
+                {
+                    if (CompareOp())
+                    {
+                        if (SimpleExp(tmp.value))
+                        {
+                            return true;
+                        }
+                    }
+
+                }
+            }
+            return false;
+
+        }
+        public bool Exp(String tmptype)
+        {
+            if (lex.TL.tokens[index].value == "(" || lex.TL.tokens[index].type == Language.Identifer || lex.TL.tokens[index].type == Language.IntNumber || lex.TL.tokens[index].type == Language.trueBoolean || lex.TL.tokens[index].type == Language.String || lex.TL.tokens[index].type == Language.Char)
+            {
                 if (SimpleExp(tmptype))
                 {
                     if (CompareOp())
@@ -789,7 +779,6 @@ namespace MyCompiler2
                     }
                     else
                     {
-                        //index++;
                         return true;
                     }
                 }
@@ -811,20 +800,14 @@ namespace MyCompiler2
                 index++;
                 return true;
             }
-            else if (lex.TL.tokens[index].value == "==")
-
-            {
-                index++;
-                return true;
-            }
-            else if (lex.TL.tokens[index].value == "=")
+            else if (lex.TL.tokens[index].value == "is")
 
             {
                 index++;
                 return true;
             }
 
-            else if (lex.TL.tokens[index].value == "!=")
+            else if (lex.TL.tokens[index].value == "not")
 
             {
                 index++;
@@ -837,12 +820,6 @@ namespace MyCompiler2
                 return true;
             }
             else if (lex.TL.tokens[index].value == ">=")
-
-            {
-                index++;
-                return true;
-            }
-            else if (lex.TL.tokens[index].value == "&&")
 
             {
                 index++;
@@ -897,12 +874,12 @@ namespace MyCompiler2
         }
         public bool BooleanOp()
         {
-            if (lex.TL.tokens[index].value == "&&")
+            if (lex.TL.tokens[index].value == "and")
             {
                 index++;
                 return true;
             }
-            else if (lex.TL.tokens[index].value == "||")
+            else if (lex.TL.tokens[index].value == "or")
             {
                 index++;
                 return true;
@@ -1059,9 +1036,6 @@ namespace MyCompiler2
 
             return false;
         }
-
-
-
         public bool ArrayIndex(string tmptype, string indexnumber)
         {
             if (lex.TL.tokens[index].value == "{")

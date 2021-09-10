@@ -15,11 +15,14 @@ namespace MyCompiler2
         static void Main(string[] args)
         {
             Parser pars = new Parser(@"class amjad {
-int maissn(int x,int y){}
 int main(){
-maissn(1,);
+int x=3+2;
+int y=8;
+if(y+2){
+}
 }
 }");
+
         }
     }
 }
