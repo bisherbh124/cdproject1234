@@ -14,11 +14,12 @@ namespace MyCompiler2
 
         static void Main(string[] args)
         {
-            Parser pars = new Parser(@"int main(){int x; int y; while(x>5){cout<<'number your entred is'<<x;if(y>10){x=x-1;}}}");
-
-
-           
-
+            Parser pars = new Parser(@"class amjad {
+int maissn(int x,int y){}
+int main(){
+maissn(1,);
+}
+}");
         }
     }
 }

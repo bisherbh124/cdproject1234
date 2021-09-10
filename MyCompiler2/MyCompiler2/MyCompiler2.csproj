@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>MyCompiler2</RootNamespace>
     <AssemblyName>MyCompiler2</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>

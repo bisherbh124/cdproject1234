@@ -39,14 +39,132 @@ namespace MyCompiler2
                 Console.WriteLine("False");
             }
         }
-
         public bool StartProgram()
+        {
+            if (lex.TL.tokens[index].value == "class")
+            {
+                index++;
+                if (lex.TL.tokens[index].type == Language.Identifer)
+                {
+                    index++;
+                    if (lex.TL.tokens[index].value == "{")
+                    {
+                        index++;
+                        if (Methods())
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        public bool Methods()
+        {
+            if (MainMethod())
+            {
+                return true;
+            }
+            if (MethodList())
+            {
+                if (MainMethod())
+                {
+                    return true;
+                }
+            }
+            
+            return false;
+
+        }
+        public bool MethodList()
+        {
+            if (Method())
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool Method(){
+            if(lex.TL.tokens[index].type==Language.DataType ){
+                index++;
+                if (lex.TL.tokens[index].type==Language.Identifer) {
+                    index++;
+                    if (lex.TL.tokens[index].value == "(")
+                    {
+                        index++;
+                        if (Params())
+                        {
+                            if (lex.TL.tokens[index].value == ")")
+                            {
+                                index++;
+                                if (lex.TL.tokens[index].value == "{")
+                                {
+                                    index++;
+                                    if (StmtList())
+                                    {
+                                        if (lex.TL.tokens[index].value == "}")
+                                        {
+                                            index++;
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        public bool Params()
+        {
+            if (Parameter())
+            {
+                if (PP())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool Parameter()
+        {
+            if (lex.TL.tokens[index].type == Language.DataType)
+            {
+                index++;
+                if (lex.TL.tokens[index].type == Language.Identifer)
+                {
+                    index++;
+                    return true;
+                }
+                else { return false; }
+            } 
+            if (lex.TL.tokens[index].value == ")") { 
+                return true; }
+            return false;
+        }
+        public bool PP()
+        {
+            if (lex.TL.tokens[index].value == ",")
+            {
+                index++;
+                if (Parameter())
+                {
+                    return true;
+                }
+                else { return false; }
+            }
+            if (lex.TL.tokens[index].value == ")") { return true; }
+            return false;
+
+        }
+        public bool MainMethod()
         {
         cc:
             if (lex.TL.tokens[index].value == "int")
             {
             ff: index++;
-                if (lex.TL.tokens[index].value == "main")
+                if (lex.TL.tokens[index].type == Language.Keyword)
                 {
                 dd: index++;
                     if (lex.TL.tokens[index].value == "(")
@@ -74,7 +192,7 @@ namespace MyCompiler2
                                         Console.WriteLine("ERRoR forget } ");
                                         lex.TL.tokens[index].value = "}";
                                         index--;
-                                        goto cx;
+                                        //goto cx;
 
                                     }
                                 }
@@ -84,7 +202,7 @@ namespace MyCompiler2
                                 Console.WriteLine("ERRoR forget { ");
                                 lex.TL.tokens[index].value = "{";
                                 index--;
-                                goto cx;
+                                //goto cx;
                             }
                         }
                         else
@@ -92,7 +210,7 @@ namespace MyCompiler2
                             Console.WriteLine("ERRoR forget ) ");
                             lex.TL.tokens[index].value = ")";
                             index--;
-                            goto xx;
+                            //goto xx;
 
                         }
                     }
@@ -101,16 +219,15 @@ namespace MyCompiler2
                         Console.WriteLine("ERRoR forget ( ");
                         lex.TL.tokens[index].value = "(";
                         index--;
-                        goto dd;
+                        //goto dd;
                     }
                 }
                 else
                 {
-                    Console.WriteLine("ERRoR must be main  ");
-
+                    //Console.WriteLine("ERRoR must be main  ");
                     lex.TL.tokens[index].value = "main";
                     index--;
-                    goto ff;
+                    //goto ff;
                 }
             }
             else
@@ -118,7 +235,7 @@ namespace MyCompiler2
 
                 Console.WriteLine("ERRoR must be int  ");
                 lex.TL.tokens[index].value = "int";
-                goto cc;
+                //goto cc;
 
             }
             return false;
@@ -139,7 +256,7 @@ namespace MyCompiler2
             }
             return false;
         }
-
+        
         public bool Stmt()
         {
             if (lex.TL.tokens[index].value == "else")
@@ -171,19 +288,22 @@ namespace MyCompiler2
                 //definition
             }
             else if (lex.TL.tokens[index].type == Language.Identifer)
-
-            //if (lex.TL.tokens[index].value == "(" || lex.TL.tokens[index].type == Language.Identifer || lex.TL.tokens[index].type == Language.IntNumber || lex.TL.tokens[index].type == Language.trueBoolean || lex.TL.tokens[index].type == Language.String || lex.TL.tokens[index].type == Language.Char)
             {
                 if (Exp())
                 {
-
                     if (lex.TL.tokens[index].value == ";")
                     {
                         index++;
                         return true;
                     }
                 }
+                if (Callfunction())
+                {
+                    return true;
+                }
+                
             }
+            
             else if (lex.TL.tokens[index].value == "for" || lex.TL.tokens[index].value == "while")
             {
                 if (Exprloop())
@@ -476,8 +596,6 @@ namespace MyCompiler2
             }
             return false;
         }
-
-
         public bool Exprloop()
         {
             if (lex.TL.tokens[index].value == "for" || lex.TL.tokens[index].value == "while")
@@ -564,6 +682,62 @@ namespace MyCompiler2
             //{
             //    return true;
             //}
+            return false;
+        }
+        public bool Callfunction()
+        {
+            if (lex.TL.tokens[index].value == "(")
+            {
+                index++;
+                if (CallParams())
+                {
+                    if (lex.TL.tokens[index].value == ")")
+                    {
+                        index++;
+                        if (lex.TL.tokens[index].value == ";")
+                        {
+                            index++;
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        public bool CallParams()
+        {
+            if (Passvalue())
+            {
+                if (PV())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool Passvalue()
+        {
+            if (lex.TL.tokens[index].type == Language.Identifer )
+            {
+                index++;
+                return true;
+            }
+            if (Values() != "")
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool PV()
+        {
+            if (lex.TL.tokens[index].value == ",")
+            {
+                index++;
+                if(Passvalue()){
+                    return true;
+                }
+                else { return false; }
+            } if (lex.TL.tokens[index].value == ")") { return true; }
             return false;
         }
         public bool Exp()
@@ -669,7 +843,6 @@ namespace MyCompiler2
             }
             return false;
         }
-
         public bool AddOp()
         {
             if (lex.TL.tokens[index].value == "+")
@@ -779,7 +952,6 @@ namespace MyCompiler2
             return false;
 
         }
-
         public bool Factor2()
         {
             if (lex.TL.tokens[index].value == "(")
@@ -809,8 +981,6 @@ namespace MyCompiler2
             else { return false; }
             return false;
         }
-
-
         public bool Exp3(String tmptype)
         {
 
@@ -818,20 +988,12 @@ namespace MyCompiler2
             {
                 if (SimpleExp2(tmptype))
                 {
-
-
-
                     return true;
-
-
-
-
                 }
             }
             return false;
 
         }
-
         public bool SimpleExp2(String tmptype)
         {
             if (Term2(tmptype))
@@ -863,7 +1025,6 @@ namespace MyCompiler2
             }
             return false;
         }
-
         public bool AddOp2()
         {
             if (lex.TL.tokens[index].value == "+")
@@ -878,7 +1039,6 @@ namespace MyCompiler2
             }
             return false;
         }
-
         public bool Term2(string tmptype)
         {
             if (Factor2a(tmptype))
